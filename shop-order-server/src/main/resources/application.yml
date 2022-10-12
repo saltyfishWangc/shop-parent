@@ -1,0 +1,43 @@
+server:
+  port: 8082
+#  tomcat:
+#    threads:
+#      max: 10 # tomcat的最大并发值修改为10
+spring:
+  application:
+    name: order-service
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.19.128:3306/shop-order?serverTimezone=UTC&useUnicode=true&useSSL=false&characterEncoding=utf8&autoReconnect=true
+    username: root
+    password: root
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.19.128:8848
+    sentinel:
+      transport:
+        # 跟Sentinel控制台交互的端口，随意指定一个未被占用的端口即可
+        port: 8999
+        # Sentinel控制台服务的地址
+        dashboard: 192.168.19.128:8099
+      # 配合链路流控的配置。表示把@SentinelResource链路的上一级地址也展示出来
+      web-context-unify: false
+
+  jpa:
+    properties:
+      hibernate:
+        # 自动根据实体创建表结构
+        hbm2ddl:
+          auto: update
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
+product-service:
+  # 配置product-service服务的ribbon负载均衡策略
+  ribbon:
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+
+feign:
+  sentinel:
+    # 开启feign整合sentinel的开关
+    enabled: true
