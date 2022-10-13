@@ -6,9 +6,33 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 192.168.19.129:8848
+        server-addr: 192.168.19.128:8848
     gateway:
       discovery:
         locator:
           # 让gateway可以发现nacos中的微服务
           enabled: true
+      routes:
+        # 路由名称，要求唯一
+        - id: product_route
+          # 将符合条件的请求转发到哪个微服务，lb表示对服务进行负载均衡，是loadbalance的缩写
+          uri: lb://product-service
+          # 断言，路由条件
+          predicates:
+            - Path=/product-serv/**
+          filters:
+            # 在转发请求之前，将拦截到的路径的第一层路径删除掉
+            - StripPrefix=1
+        - id: order_route
+          uri: lb://order-service
+          predicates:
+            - Path=/order-serv/**
+          filters:
+            - StripPrefix=1
+            - Time=true
+    sentinel:
+      transport:
+        # 跟Sentinel控制台交互的端口，随意指定一个未被占用的端口即可
+        port: 8299
+        # Sentinel控制台服务的地址
+        dashboard: 192.168.19.128:8099
