@@ -21,6 +21,7 @@ public class OrderController {
 
     @RequestMapping("/order")
     public Order order(Long pid, Long uid) {
+        log.info("下单");
         return orderService.createOrder(pid, uid);
     }
 }

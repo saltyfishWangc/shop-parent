@@ -29,7 +29,7 @@ spring:
             - Path=/order-serv/**
           filters:
             - StripPrefix=1
-            - Time=true
+            - Time=false
     sentinel:
       transport:
         # 跟Sentinel控制台交互的端口，随意指定一个未被占用的端口即可

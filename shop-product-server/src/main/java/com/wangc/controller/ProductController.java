@@ -22,9 +22,10 @@ public class ProductController {
     IProductService productService;
 
     @RequestMapping("/{pid}")
-    public Product findById(@PathVariable("pid") Long pid) {
+//    public Product findById(@PathVariable("pid") Long pid) {
+    public Product findById(@PathVariable("pid") String pid) {
         log.info("接下来要进行{}号商品信息的查询", pid);
-        Product product = productService.findByPid(pid);
+        Product product = productService.findByPid(Long.valueOf(pid));
         log.info("商品信息查询成功，内容为{}", JSON.toJSONString(product));
         return product;
     }

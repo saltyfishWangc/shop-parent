@@ -177,5 +177,14 @@ Product product = productFeignApi.findByPid(productId);
 ### 引入Spring Cloud Gateway
 见README-Gateway.md文档
 
+### 集成链路追踪组件Sleuth、Zipkin
+见README-Sleuth-Zipkin.md文档
+
+### 引入Nacos Config配置中心
+见README-Nacos-config.md文档
+
+### 分布式调度Elastic-job
+见README-Elastic-job.md文档
+
 
 

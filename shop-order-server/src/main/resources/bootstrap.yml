@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: order-service
+  cloud:
+    nacos:
+      config:
+        server-addr: 192.168.19.128:8848 #nacos中心地址
+        file-extension: yaml #配置文件格式
+  profiles:
+    active: dev #环境标识

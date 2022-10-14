@@ -1,0 +1,16 @@
+elasticjob:
+  zookeeper-url: 192.168.19.128:2181
+  group-name: elastic-job-group
+
+spring:
+# 数据源配置
+  datasource:
+    url: jdbc:mysql://192.168.19.128:3306/elastic-job-demo?useUnicode=true&characterEncoding=utf8&autoReconnect=true
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: root
+
+    # 启动时自动执行初始化脚本
+    initialization-mode: always
+    schema: classpath:sql/elastic-job-demo_init.sql

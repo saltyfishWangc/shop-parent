@@ -22,11 +22,11 @@ public class AuthGlobalFilter implements GlobalFilter {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 获取到请求中的token信息，验证token是否有效，如果无效则拦截请求，直接返回，不继续走下去
         String token = exchange.getRequest().getQueryParams().getFirst("token");
-        if (StringUtils.isEmpty(token) || "123".equals(token)) {
-            log.error("鉴权失败");
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-            return exchange.getResponse().setComplete();
-        }
+//        if (StringUtils.isEmpty(token) || "123".equals(token)) {
+//            log.error("鉴权失败");
+//            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+//            return exchange.getResponse().setComplete();
+//        }
         return chain.filter(exchange);
     }
 }
