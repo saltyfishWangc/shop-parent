@@ -29,6 +29,8 @@ public void doWork() {
 需要启动zookeeper:
 下载地址：http://archive.apache.org/dist/zookeeper/zookeeper-3.4.1/zookeeper-3.4.1.tar.gz
 
+参考文档(说的挺详细的)：https://www.songma.com/news/txtlist_i67773v.html
+
 #### Spring Boot整合Elastic-job
 
 ##### 快速入门
@@ -139,3 +141,83 @@ Dataflow类型调度任务代码时间见：com.wangc.config.JobConfig.testFileC
 下一个定时周期又同样从fetchData方法开始。
 
 那有个问题，如果在一个定时周期内，数据量大到每次抓取都有数据，那还会开启下一个周期吗？
+
+##### 运维管理
+记录定时任务执行的情况，控制台管理定时任务，在页面上可以人工触发任务，修改定时任务时间。
+
+1. 事件追踪
+Elastic-Job-Lite在配置中提供了JobEvevtConfiguration，支持数据库方式配置，项目启动时会自动在数据库中
+创建JOB_EXECUTION_LOG和JOB_STATUS_TRACE_LOG两张表以及若干索引来记录作业的相关信息。
+
+修改Elastic-Job配置类
+在JobConfig配置类中注入DataSource。因为引入的是Druid，所以容器内是已经有这个数据源了的，这里直接注入就有了。
+```
+/**
+ * 注入数据源，来配合JobEventConfiguration记录
+ */
+@Autowired
+DataSource dataSource;
+```
+在任务配置中添加事件追踪配置
+原本：
+```
+return new SpringJobScheduler(job, registryCenter, jobConfiguration);
+```
+添加事件追踪配置后变成：
+```
+/**
+ * 增加任务事件追踪配置
+ * 这样任务的执行情况就被记录在数据库
+ */
+JobEventConfiguration jobEventConfiguration = new JobEventRdbConfiguration(dataSource);
+return new SpringJobScheduler(job, registryCenter, jobConfiguration, jobEventConfiguration);
+```
+
+2. 运维控制台
+elastic-job中提供了一个elastic-job-lite-console控制台
+
+<br>设计理念</br>
+* 本控制台和Elastic-Job并无直接关系，是通过读取Elastic-Job注册中心数据展示作业状态，或更新注册中心数据修改全局配置。
+* 控制台只能控制任务本身是否运行，但不能控制作业进程的启停，因为控制台和作业本身服务器是完全分布式的，控制台并不能控
+制作业服务器。
+
+<br>主要功能</>
+* 查看作业已经服务状态
+* 快捷的修改以及删除作业配置
+* 启用和禁用作业
+* 跨注册中心查看作业
+* 查看作业运行轨迹和运行状态
+
+<br>不支持项</br>
+* 添加作业：因为作业都是在首次运行时自动添加，使用控制台添加作业并无必要。直接在作业服务器启动包含Elastic-Job的作业进程即可。
+
+<br>搭建步骤(见本有道云笔记[Elastic-job])</b>
+* 下载elastic-job-lite-console-2.1.5.tar
+* 解压缩后进入bin目录执行：./start.sh
+* 浏览器访问http://192.168.19.128:8899
+默认用户名/密码: root/root
+
+控制台操作：
+<br>注册中心配置</br>
+在全局配置的注册中心配置中添加注册中心，信息如下：
+注册中心名称：zookeeper
+注册中心地址：192.168.19.128:2181
+命令空间：elastic-job-boot
+
+提交之后在操作栏点连接。
+
+<br>事件追踪数据源配置</br>
+在全局配置的事件追踪数据源配置中添加事件追踪数据源，信息如下：
+事件追踪数据源名称：datasource
+事件追踪数据源驱动：com.mysql.jdbc.Driver
+事件追踪数据源连接地址：jdbc:mysql://192.168.19.128:3306/elastic-job-demo?useUnicode=true&characterEncoding=utf8&autoReconnect=true
+事件追踪数据源用户名：root
+事件追踪数据源密码：root
+
+提交之后在操作栏点连接。
+
+<br>作业维度</br>
+作业操作下的作业维度会显示所有的作业列表。选中作业可以进行修改、触发、失效、停止操作。
+
+<br>服务器维度</br>
+作业操作下的作业维度会显示所有的服务实例。

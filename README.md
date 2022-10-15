@@ -41,6 +41,8 @@ Nacos致力于帮助发现、配置和管理微服务。Nacos提供了一组简�
 元数据及流量管理。
 总结：Nacos的作用就是一个注册中心，用来管理注册上来的各个微服务。
 
+中文网地址：https://nacos.io/zh-cn/docs/quick-start.html
+
 核心功能点：
 * 服务注册：Nacos Client会通过发送REST请求向Nacos Server注册自己的服务，提供自身的元数据，比如ip地址，端口等信
 息。Nacos Server接收到注册请求后，就会把这些元数据存储到一个双层的内存Map中。
@@ -185,6 +187,9 @@ Product product = productFeignApi.findByPid(productId);
 
 ### 分布式调度Elastic-job
 见README-Elastic-job.md文档
+
+### 引入消息中间件RocketMQ
+见README-RocketMQ.md文档
 
 
 

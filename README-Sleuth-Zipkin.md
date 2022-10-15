@@ -30,6 +30,18 @@ Zipkin是Twitter基于google的分布式监控系统Dapper(论文)的开发源�
 1. 下载
 去官网https://zipkin.io下载Zipkin的jar包
 
+或者
+下载源码编译后运行：
+```
+git clone https://github.com/openzipkin/zipkin
+cd zipkin
+# Build the server and also make its dependencies
+./mvnw -DskipTests --also-make -pl zipkin-server clean install
+# Run the server
+java -jar ./zipkin-server/target/zipkin-server-*exec.jar
+```
+
+
 2. 运行
 通过java -jar运行jar包
 ```

@@ -4,6 +4,8 @@ import com.dangdang.ddframe.job.config.JobCoreConfiguration;
 import com.dangdang.ddframe.job.config.JobTypeConfiguration;
 import com.dangdang.ddframe.job.config.dataflow.DataflowJobConfiguration;
 import com.dangdang.ddframe.job.config.simple.SimpleJobConfiguration;
+import com.dangdang.ddframe.job.event.JobEventConfiguration;
+import com.dangdang.ddframe.job.event.rdb.JobEventRdbConfiguration;
 import com.dangdang.ddframe.job.lite.config.LiteJobConfiguration;
 import com.dangdang.ddframe.job.lite.spring.api.SpringJobScheduler;
 import com.dangdang.ddframe.job.reg.base.CoordinatorRegistryCenter;
@@ -13,9 +15,12 @@ import com.wangc.job.FileCustomDataflowJob;
 import com.wangc.job.FileCustomElasticJob;
 import com.wangc.job.MyElasticJob;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.sql.DataSource;
 
 /**
  * @author
@@ -24,6 +29,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class JobConfig {
+
+    /**
+     * 注入数据源，来配合JobEventConfiguration记录
+     */
+    @Autowired
+    DataSource dataSource;
 
     /**
      * 注册中心配置
@@ -111,6 +122,14 @@ public class JobConfig {
     @Bean(initMethod = "init")
     public SpringJobScheduler testFileCustomDataflowJob(FileCustomDataflowJob job, CoordinatorRegistryCenter registryCenter) {
         LiteJobConfiguration jobConfiguration = createJobConfiguration(job.getClass(), "0/5 * * * * ?", 1, null, true);
-        return new SpringJobScheduler(job, registryCenter, jobConfiguration);
+
+        /**
+         * 增加任务事件追踪配置
+         * 这样任务的执行情况就被记录在数据库
+         */
+        JobEventConfiguration jobEventConfiguration = new JobEventRdbConfiguration(dataSource);
+
+//        return new SpringJobScheduler(job, registryCenter, jobConfiguration);
+        return new SpringJobScheduler(job, registryCenter, jobConfiguration, jobEventConfiguration);
     }
 }
