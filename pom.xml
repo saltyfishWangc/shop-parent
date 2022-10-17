@@ -14,6 +14,7 @@
         <module>shop-order-server</module>
         <module>api-gateway</module>
         <module>elastic-job-boot</module>
+        <module>rocketmq-boot</module>
     </modules>
     <packaging>pom</packaging>
 
