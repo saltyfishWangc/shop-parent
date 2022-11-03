@@ -191,5 +191,8 @@ Product product = productFeignApi.findByPid(productId);
 ### 引入消息中间件RocketMQ
 见README-RocketMQ.md文档
 
+### 引入Seata分布式事务解决方案
+见README-Seata.md文档
+
 
 

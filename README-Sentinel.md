@@ -122,7 +122,7 @@ com.wangc.controller.AuthController.auth
 7. Feign整合Sentinel
 背景：通常情况下，当下游服务被流控后返回的处理，上游服务是没法处理的，所以得给兜底处理
 
-在服务调用方项目(我们这里是订单服务)的配置文件中开启feign对Sentinel的支持
+在服务调用方项目(我们这里是订单服务)的配置文件中开启feign对Sentinel的支持。只有这个配置了这个，那么在远程调用时如果被降级，上级服务才会走对应的降级方法，也就是兜底的方法
 ```
 feign:
     sentinel:
